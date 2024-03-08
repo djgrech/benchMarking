@@ -8,6 +8,7 @@ using System.Reflection;
 var summary = BenchmarkRunner.Run(typeof(Program).Assembly);
 
 [SimpleJob(RuntimeMoniker.Net80)]
+[MemoryDiagnoser]
 //[RPlotExporter]
 public class Test
 {
@@ -19,6 +20,8 @@ public class Test
 
     // for Expression Setter
     ExpressionSetter<Customer> exp;
+
+    CustomExpressionSetter<Customer> customExp;
 
     [Params(1000, 10000)] public int N;
 
@@ -33,6 +36,9 @@ public class Test
 
         // expression
         exp = new ExpressionSetter<Customer>();
+
+        // custom expression
+        customExp = new CustomExpressionSetter<Customer>();
     }
 
     [Benchmark]
@@ -64,6 +70,17 @@ public class Test
         exp.Set(c, "Age", 12);
         exp.Set(c, "Price", 1.65m);
     }
+
+    [Benchmark]
+    public void TestCustomExpression()
+    {
+        var c = new Customer();
+        customExp.Set(c, "Name", "test");
+        customExp.Set(c, "Surname", "test");
+        customExp.Set(c, "Age", 12);
+        customExp.Set(c, "Price", 1.65m);
+    }
+
 }
 
 
